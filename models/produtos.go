@@ -1,6 +1,8 @@
 package models
 
-import "github.com/luiz/loja/db"
+import (
+	"github.com/luiz/loja/db"
+)
 
 type Produto struct {
 	Id         int
@@ -41,4 +43,17 @@ func BuscaTodosOsProdutos() []Produto {
 	defer db.Close()
 
 	return produtos
+}
+
+func CriaNovoProduto(nome, descricao string, preco float64, quantidade int) {
+	db := db.ConectaComBancoDeDados()
+
+	insereDadosNoBanco, err := db.Prepare("insert into produtos(nome,descricao,preco,quantidade)values($1,$2,$3,$4)")
+
+	if err != nil {
+		panic(err.Error())
+	}
+
+	insereDadosNoBanco.Exec(nome, descricao, preco, quantidade)
+	defer db.Close()
 }
